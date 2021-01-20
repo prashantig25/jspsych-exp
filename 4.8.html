@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>4.8</title>
+    <script src="jspsych-6.0.5/jspsych.js"></script>
+    <script src="jspsych-6.0.5/plugins/jspsych-html-keyboard-response.js"></script>
+    <script src="jspsych-6.0.5/plugins/jspsych-psychophysics.js"></script>
+    <link href="jspsych-6.0.5/css/jspsych.css" rel="stylesheet" type="text/css"/>
+</head>
+<style>
+    body {
+        background-color: #7e7d7d;
+    }
+</style>
+<script>
+    var timeline = [];
+    var welcome = {
+        type: "html-keyboard-response",
+        stimulus: '<p style="font-size: 30px;">Welcome</p>',
+    };
+    timeline.push(welcome);
+    var instructions = {
+        type: "html-keyboard-response",
+        stimulus: '<p style="font-size: 30px;">Instructions</p>',
+    };
+    timeline.push(instructions);
+    function randbet(min, max) {
+        return Math.random() * (max - min) + min;
+    }
+    function rannum() {
+        return Math.random()
+    }
+    var CL0 = Math.random(); var RD0 = randbet(0.05, 0.35); // contrast levels = CL and relative difference between the conlevels of 2 patches and reldiff = RD
+    var CL1 = Math.random(); var RD1 = randbet(0.05, 0.35);
+    var CL2 = Math.random(); var RD2 = randbet(0.05, 0.35);
+    var CL3 = Math.random(); var RD3 = randbet(0.05,0.35);
+    var CL4 = Math.random(); var RD4 = randbet(0.05,0.35);
+
+    var CL1R = CL1 + RD1; var CLR = CL0 + RD0
+    var CL2L = CL2 + RD2; var CL3L = CL3 + RD3;
+    var CL4L = CL4 + RD4;
+    var fixation = {
+        obj_type: 'manual',
+        startX: 800, // location of the cross's center in the canvas
+        startY: 420, // Change the coordinate origin to the center of the window
+        line_color: '#000000',// You can use the HTML color name instead of the HEX color.
+        show_start_time: 0,
+        motion_end_time: 2000,
+        drawFunc() {
+            context = jsPsych.currentTrial().context;
+            context.beginPath();
+            context.moveTo(752.5, 380); //horizontal line
+            context.lineTo(797.5, 380);
+            context.moveTo(775, 355); //vertical line
+            context.lineTo(775, 405);
+            context.filter = 'contrast(1)';
+            context.lineWidth = 5;
+            context.stroke();
+        }
+    }
+    // Gabor generation
+    var Left0 = {
+        obj_type: 'manual', // means a rectangle
+        startX: 550, // location in the canvas
+        startY: 325,
+        endX: 700,
+        endY: 325,
+        width: 300, // of the rectangle
+        height: 200,
+        horiz_pix_sec: 30,
+        show_start_time: 0,
+        motion_start_time: 2000,
+        drawFunc() {
+            context = jsPsych.currentTrial().context;
+            var pos = 0;
+            const gradLength = 100;
+            const my_gradient  = context.createLinearGradient(400, 0, 600, 0);
+            const bands = 10;
+            const colors = ["#000", "#FFF"];
+            const stops = bands * colors.length;
+            while (pos <= stops) {
+                my_gradient.addColorStop(pos / stops, colors[pos % colors.length]);
+                pos++;
+            }
+            context.filter = 'contrast('+ CL1 +')';
+            context.fillStyle = my_gradient;
+            context.fillRect(500,325,gradLength,gradLength);
+            context.stroke();
+        }
+    };
+    var Right0 = {
+        obj_type: 'manual',
+        horiz_pix_sec: 30,
+        show_start_time: 0,
+        motion_start_time: 2000,// means a rectangle
+        startX: 950, // location in the canvas
+        startY: 325,
+        endX: 1150,
+        endY: 325,
+        width: 300, // of the rectangle
+        height: 200,
+        drawFunc() {
+            context = jsPsych.currentTrial().context;
+            const gradLength = 100;
+            const my_gradient  = context.createLinearGradient(850, 0, 1050, 0);
+            const bands = 10;
+            const colors = ["#000", "#FFF"];
+            const stops = bands * colors.length;
+            var pos = 0;
+            while (pos <= stops) {
+                my_gradient.addColorStop(pos / stops, colors[pos % colors.length]);
+                pos++;
+            }
+            context.filter = 'contrast('+ CL1R +')';
+            context.fillStyle = my_gradient;
+            context.fillRect(950,325,gradLength,gradLength);
+            context.stroke()
+        }
+    };
+    var Left1 = {
+        obj_type: 'manual', // means a rectangle
+        startX: 550, // location in the canvas
+        startY: 325,
+        endX: 700,
+        endY: 325,
+        width: 300, // of the rectangle
+        height: 200,
+        horiz_pix_sec: 30,
+        show_start_time: 0,
+        motion_start_time: 2000,
+        drawFunc() {
+            context = jsPsych.currentTrial().context;
+            const gradLength = 100;
+            const my_gradient  = context.createLinearGradient(400, 0, 600, 0);
+            const bands = 10;
+            const colors = ["#000", "#FFF"];
+            const stops = bands * colors.length;
+            var pos = 0;
+            while (pos <= stops) {
+                my_gradient.addColorStop(pos / stops, colors[pos % colors.length]);
+                pos++;
+            }
+            context.filter = 'contrast('+ CL2L +')';
+            context.fillStyle = my_gradient;
+            context.fillRect(500,325,gradLength,gradLength);
+            context.stroke();
+        }
+    };
+    var Right1 = {
+        obj_type: 'manual',
+        horiz_pix_sec: 30,
+        show_start_time: 0,
+        motion_start_time: 2000,// means a rectangle
+        startX: 950, // location in the canvas
+        startY: 325,
+        endX: 1150,
+        endY: 325,
+        width: 300, // of the rectangle
+        height: 200,
+        drawFunc() {
+            context = jsPsych.currentTrial().context;
+            const gradLength = 100;
+            const my_gradient  = context.createLinearGradient(850, 0, 1050, 0);
+            const bands = 10;
+            const colors = ["#000", "#FFF"];
+            const stops = bands * colors.length;
+            var pos = 0;
+            while (pos <= stops) {
+                my_gradient.addColorStop(pos / stops, colors[pos % colors.length]);
+                pos++;
+            }
+            context.filter = 'contrast('+ CL2 +')';
+            context.fillStyle = my_gradient;
+            context.fillRect(950,325,gradLength,gradLength);
+            context.stroke()
+        }
+    };
+    var Left2 = {
+        obj_type: 'manual', // means a rectangle
+        startX: 550, // location in the canvas
+        startY: 325,
+        endX: 700,
+        endY: 325,
+        width: 300, // of the rectangle
+        height: 200,
+        horiz_pix_sec: 30,
+        show_start_time: 0,
+        motion_start_time: 2000,
+        drawFunc() {
+            context = jsPsych.currentTrial().context;
+            const gradLength = 100;
+            const my_gradient  = context.createLinearGradient(400, 0, 600, 0);
+            const bands = 10;
+            const colors = ["#000", "#FFF"];
+            const stops = bands * colors.length;
+            var pos = 0;
+            while (pos <= stops) {
+                my_gradient.addColorStop(pos / stops, colors[pos % colors.length]);
+                pos++;
+            }
+            context.filter = 'contrast('+ CL0 +')';
+            context.fillStyle = my_gradient;
+            context.fillRect(500,325,gradLength,gradLength);
+            context.stroke();
+        }
+    };
+    var Right2 = {
+        obj_type: 'manual',
+        horiz_pix_sec: 30,
+        show_start_time: 0,
+        motion_start_time: 2000,// means a rectangle
+        startX: 950, // location in the canvas
+        startY: 325,
+        endX: 1150,
+        endY: 325,
+        width: 300, // of the rectangle
+        height: 200,
+        drawFunc() {
+            context = jsPsych.currentTrial().context;
+            var pos = 0;
+            const gradLength = 100;
+            const my_gradient  = context.createLinearGradient(850, 0, 1050, 0);
+            const bands = 10;
+            const colors = ["#000", "#FFF"];
+            const stops = bands * colors.length;
+            while (pos <= stops) {
+                my_gradient.addColorStop(pos / stops, colors[pos % colors.length]);
+                pos++;
+            }
+            context.filter = 'contrast('+ CLR +')';
+            context.fillStyle = my_gradient;
+            context.fillRect(950,325,gradLength,gradLength);
+            context.stroke()
+        }
+    };
+    var fix = {
+        type: 'psychophysics',
+        stimuli: [fixation],
+        trial_duration: 500,
+    }
+    var trial1a = {
+        type: 'psychophysics',
+        stimuli: [Left0, Right0, fixation],
+        choices: [37, 39], // The participant can respond to the stimuli using the 'left' or 'right' arrow.
+        trial_duration: 2000,
+        data: {
+            stimulus_type: '1a'
+        },
+        on_finish: function (data) {
+            if(data.key_press == 39){
+                data.correct = true;
+            } else {
+                data.correct = false;
+            }
+        }
+    }
+    var trial1b = {
+        type: 'psychophysics',
+        stimuli: [Left1, Right1, fixation],
+        choices: [37, 39], // The participant can respond to the stimuli using the 'left' or 'right' arrow.
+        trial_duration: 2000,
+        data: {
+            stimulus_type: '1a'
+        },
+        on_finish: function (data) {
+            if(data.key_press == 39){
+                data.correct = true;
+            } else {
+                data.correct = false;
+            }
+        }
+    }
+    var trial1c = {
+        type: 'psychophysics',
+        stimuli: [Left2, Right2, fixation],
+        choices: [37, 39], // The participant can respond to the stimuli using the 'left' or 'right' arrow.
+        trial_duration: 2000,
+        data: {
+            stimulus_type: '1a'
+        },
+        on_finish: function (data) {
+            if(data.key_press == 39){
+                data.correct = true;
+            } else {
+                data.correct = false;
+            }
+        }
+    }
+    var fb = {
+        type: 'html-keyboard-response',
+        choices: jsPsych.NO_KEYS,
+        trial_duration: 1000,
+        stimulus: function(){
+            var last_trial_correct = jsPsych.data.get().last(1).values()[0].correct;
+            if(last_trial_correct){
+                return "<p style=\"font-size: 30px;color: #016901\">You win 1 point!</p>";
+            }
+            else{
+                return "<p style=\"font-size: 30px;color: #ba0000\">You win 0 points!</p>"
+            }
+        }
+    }
+    var block50_50 = {
+        timeline: [fix, trial1a, fb, fix, trial1b, fb, fix, trial1c, fb],
+        repetitions: 2,
+        randomize_order: true
+    }
+    timeline.push(block50_50);
+    var end1 = {
+        type: "html-keyboard-response",
+        stimulus: "End of block 1",
+    };
+    jsPsych.init({
+        timeline: timeline,
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    });
+</script>
+</html>
