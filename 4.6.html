@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>4.6</title>
+    <script src="jspsych-6.0.5/jspsych.js"></script>
+    <script src="jspsych-6.0.5/plugins/jspsych-html-keyboard-response.js"></script>
+    <script src="jspsych-6.0.5/plugins/jspsych-psychophysics.js"></script>
+    <link href="jspsych-6.0.5/css/jspsych.css" rel="stylesheet" type="text/css"/>
+</head>
+<style>
+    body {
+        background-color: #7e7d7d;
+    }
+</style>
+<script>
+    var timeline = [];
+    var welcome = {
+        type: "html-keyboard-response",
+        stimulus: '<p style="font-size: 30px;">Welcome</p>',
+    };
+    timeline.push(welcome);
+    var instructions = {
+        type: "html-keyboard-response",
+        stimulus: '<p style="font-size: 30px;">Instructions</p>',
+    };
+    timeline.push(instructions);
+    function randbet(min, max) {
+        return Math.random() * (max - min) + min;
+    }
+
+    var fixation = {
+        obj_type: 'manual',
+        startX: 800, // location of the cross's center in the canvas
+        startY: 420, // Change the coordinate origin to the center of the window
+        line_color: '#000000',// You can use the HTML color name instead of the HEX color.
+        show_start_time: 0,
+        motion_end_time: 2000,
+        drawFunc() {
+            context = jsPsych.currentTrial().context;
+            context.beginPath();
+            context.moveTo(752.5, 380); //horizontal line
+            context.lineTo(797.5, 380);
+            context.moveTo(775, 355); //vertical line
+            context.lineTo(775, 405);
+            context.filter = 'contrast(1)';
+            context.lineWidth = 5;
+            context.stroke();
+        }
+    }
+
+    var stim = {
+        gabor: function draw(x1, y1, x2, y2, x, y, con) {
+            context = jsPsych.currentTrial().context;
+            const gradLength = 100;
+            const my_gradient = context.createLinearGradient(x1, y1, x2, y2);
+            const bands = 10;
+            const colors = ["#000", "#FFF"];
+            const stops = bands * colors.length;
+            var pos = 0;
+            while (pos <= stops) {
+                my_gradient.addColorStop(pos / stops, colors[pos % colors.length]);
+                pos++;
+            }
+            context.fillStyle = my_gradient;
+            context.filter = 'contrast(' + con + ')'
+            context.fillRect(x, y, gradLength, gradLength);
+            context.stroke()
+        }
+    }
+    var Left0 = {
+            obj_type: 'manual', horiz_pix_sec: 30, show_start_time: 0, motion_start_time: 2000,
+            startX: 950, startY: 325, endX: 1150, endY: 325, // location in the canvas
+            width: 300, height: 200, // of the rectangle
+            drawFunc: function () {
+                stim.gabor(400, 0, 600, 0, 500, 325, jsPsych.currentTrial().contrast)
+            }
+        };
+    var Right0 = {
+            obj_type: 'manual', horiz_pix_sec: 30, show_start_time: 0, motion_start_time: 2000,
+            startX: 950, startY: 325, endX: 1150, endY: 325, // location in the canvas
+            width: 300, height: 200, // of the rectangle
+            drawFunc: function () {
+                stim.gabor(850, 0, 1050, 0, 950, 325, jsPsych.currentTrial().contrast1)
+            }
+        };
+    var Left1 = {
+            obj_type: 'manual', horiz_pix_sec: 30, show_start_time: 0, motion_start_time: 2000,
+            startX: 950, startY: 325, endX: 1150, endY: 325, // location in the canvas
+            width: 300, height: 200, // of the rectangle
+            drawFunc: function () {
+                stim.gabor(400, 0, 600, 0, 500, 325, jsPsych.currentTrial().contrast1)
+            }
+        };
+    var Right1 = {
+            obj_type: 'manual', horiz_pix_sec: 30, show_start_time: 0, motion_start_time: 2000,
+            startX: 950, startY: 325, endX: 1150, endY: 325, // location in the canvas
+            width: 300, height: 200, // of the rectangle
+            drawFunc: function () {
+                stim.gabor(850, 0, 1050, 0, 950, 325, jsPsych.currentTrial().contrast)
+            }
+        };
+
+    var fix = {
+            type: 'psychophysics',
+            stimuli: [fixation],
+            trial_duration: 500,
+        }
+    var trial1a = {
+            type: 'psychophysics', stimuli: [Left0, Right0, fixation], choices: [37, 39], trial_duration: 2000,
+            data: {
+                stimulus_type: '1a'
+            },
+            on_finish: function (data) {
+                if (data.key_press === 37) {
+                    data.correct = true;
+                } else {
+                    data.correct = false;
+                }
+            },
+            on_start: function(trial1a){
+            trial1a.contrast = Math.random(); trial1a.contrast1 = randbet(0.05,0.35)
+            }
+        }
+    var trial1b = {
+            type: 'psychophysics', stimuli: [Left1, Right1, fixation], choices: [37, 39], trial_duration: 2000,
+            data: {
+                stimulus_type: '1a'
+            },
+            on_finish: function (data) {
+                if (data.key_press === 39) {
+                    data.correct = true;
+                } else {
+                    data.correct = false;
+                }
+            },
+            on_start: function(trial1b){
+            trial1b.contrast = Math.random(); trial1b.contrast1 = randbet(0.05,0.35)
+        }
+        }
+
+    var fb = {
+            type: 'html-keyboard-response', choices: jsPsych.NO_KEYS, trial_duration: 1000,
+            stimulus: function () {
+                var last_trial_correct = jsPsych.data.get().last(1).values()[0].correct;
+                if (last_trial_correct) {
+                    return "<p style=\"font-size: 30px;color: #016901\">You win 1 point!</p>";
+                } else {
+                    return "<p style=\"font-size: 30px;color: #ba0000\">You win 0 points!</p>"
+                }
+            }
+        }
+    var block50_50 = {
+            timeline: [fix, trial1a, fb, fix, trial1b, fb],
+            repetitions: 5,
+            randomize_order: true
+        }
+
+    timeline.push(block50_50);
+    var end1 = {
+        type: "html-keyboard-response",
+        stimulus: "End of block 1",
+    };
+    jsPsych.init({
+        timeline: timeline,
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    });
+
+</script>
+</html>
