@@ -40,8 +40,8 @@
         context.lineWidth = 3;
         context.stroke();
     }
-    function gabor(c) {  //x1, y1, x2, y2 are the coordinates for the start and end of the gradient.
-        var context = c.getContext("2d"); // x, y are the position of the gabor on the screen. Con is the contrast level
+    function gabor(c) {  
+        var context = c.getContext("2d"); 
         const my_gradient = context.createLinearGradient(0,0,200,0);
         const my_gradient1 = context.createLinearGradient(225,0,425,0);
         const bands = 10;
@@ -98,7 +98,6 @@
             }
         }
     };
-    //timeline.push(trial1);
     var fb = {
         type: 'html-keyboard-response', choices: jsPsych.NO_KEYS, trial_duration: 1000,
         stimulus: function () {
