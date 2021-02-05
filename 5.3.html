@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>5.3</title>
+    <script src="jspsych-6.0.5/jspsych.js"></script>
+    <script src="jspsych-6.0.5/plugins/jspsych-html-keyboard-response.js"></script>
+    <script src="jspsych-6.0.5/plugins/jspsych-canvas-keyboard-response.js"></script>
+    <link href="jspsych-6.0.5/css/jspsych.css" rel="stylesheet" type="text/css"/>
+</head>
+<style>
+    body {
+        background-color: #7e7d7d;
+    }
+</style>
+<canvas id="c" width="300" height="150" style="border:1px solid #d3d3d3; color: lightslategrey">
+    Your browser does not support the HTML5 canvas tag.</canvas>
+<script>
+    var timeline = []; //array with every stage of the experiment.
+    var duration = 1000; //trial duration
+    function randbet(min, max) { //randbet generates a randomly number between the min and max number. // min and max are the upper and lower bound.
+        return Math.random() * (max - min) + min;
+    }
+    function fixation(c) { //generates fixation by drawing on HTML canvas.
+        var context = c.getContext("2d"); //Name of the canvas
+        context.moveTo(240, 250); //start of horizontal line
+        context.lineTo(280, 250); //end of horizontal line
+        context.moveTo(260, 230); //start of vertical line
+        context.lineTo(260, 270); //end of vertical line
+        context.filter = 'contrast(1)'; //keeps the contrast constant
+        context.lineWidth = 3;
+        context.stroke();
+    }
+    function gabor(c) { //generates 2 gabors left and right to the fixation
+        var context = c.getContext("2d");
+        const my_gradient = context.createLinearGradient(0,0,200,0); const my_gradient1 = context.createLinearGradient(225,0,425,0); //two gradients for two gabors
+        const bands = 10; const colors = ["#000", "#FFF"];
+        const stops = bands * colors.length; //number of layers that you want to color in the patch
+        var pos = 0; var pos1 = 0;
+        while (pos <= stops) { //colors each band of the patch with white and black.
+            my_gradient1.addColorStop(pos / stops, colors[pos % colors.length]);
+            pos++;
+        }
+        while (pos1 <= stops) {
+            my_gradient.addColorStop(pos1 / stops, colors[pos1 % colors.length]);
+            pos1++;
+        }
+        context.fillStyle = my_gradient; //gradients for left and right Gabor
+        context.filter = 'contrast('+ jsPsych.currentTrial().contrast +')' //contrast level randomly generated after every trial
+        context.fillRect(100,200,100,100);
+        context.fillStyle = my_gradient1;
+        context.filter = 'contrast('+ jsPsych.currentTrial().contrast1 +')'
+        context.fillRect(325,200,100,100);
+        context.stroke()
+        context.moveTo(240, 250); context.lineTo(280, 250); //horizontal line
+        context.moveTo(260, 230); context.lineTo(260, 270); //vertical line
+        context.filter = 'contrast(1)'; context.lineWidth = 3;
+        context.stroke();
+    }
+    var welcome = {
+        type: "html-keyboard-response", stimulus: "Welcome",
+    };
+    timeline.push(welcome);
+    var instructions = {
+        type: "html-keyboard-response", stimulus: "Hello Instructions",
+    };
+    timeline.push(instructions);
+    var fix = {
+        type: 'canvas-keyboard-response',
+        stimulus: function(c) {
+            fixation(c);
+        },
+        trial_duration: 500, choices: jsPsych.NO_KEYS,
+    };
+    function shuffle(array) {
+        var ctr = array.length, temp, index; // While there are elements in the array
+        while (ctr > 0) {
+            index = Math.floor(Math.random() * ctr); // Pick a random index
+            ctr--; // Decrease ctr by 1
+            temp = array[ctr]; // And swap the last element with it
+            array[ctr] = array[index];
+            array[index] = temp;
+        }
+        return array;
+    }
+    //Correct resp for reward state 1
+    //r1_50 list of correct responses and shuffle function shuffles the order of the elements.
+    var r1_60 = [37, 39, 37, 39, 37, 39, 37, 37, 37, 39]; var rand60r1 = shuffle(r1_60);
+    var r1_90 = [37, 39, 37, 37, 37, 37, 37, 37, 37, 37]; var rand90r1 = shuffle(r1_90);
+    //Correct resp for reward state 2
+    var r2_60 = [39, 39, 39, 39, 37, 39, 37, 37, 37, 39]; var rand60r2 = shuffle(r2_60);
+    var r2_90 = [39, 39, 39, 39, 39, 39, 39, 39, 39, 37]; var rand90r2 = shuffle(r2_90);
+
+    var practicetrial = { //Practice block
+        type: 'canvas-keyboard-response',
+        on_start: function(practicetrial){ //generates a random contrast level after every trial and it acts as input in the gabor function
+            practicetrial.contrast = Math.random(); practicetrial.contrast1 = jsPsych.currentTrial().contrast  + randbet(0.05,0.35);
+        },
+        stimulus: function(c) {
+            gabor(c);
+        },
+        data: {
+            condition: '50_50',
+        },
+        choices: [37,39],
+        trial_duration: duration,
+        on_finish: function (data) {
+            if (data.key_press === rand50r1.pop()) {
+                data.correct = true;
+            } else {
+                data.correct = false;
+            }
+        },
+    };
+    var fb = {
+        type: 'html-keyboard-response', choices: jsPsych.NO_KEYS, trial_duration: duration,
+        stimulus: function () {
+            var last_trial_correct = jsPsych.data.get().last(1).values()[0].correct;
+            if (last_trial_correct) {
+                return "<p style=\"font-size: 30px;color: #016901\">You win 1 point!</p>";
+            } else {
+                return "<p style=\"font-size: 30px;color: #ba0000\">You win 0 points!</p>"
+            }
+        }
+    };
+    var practiceblock = {
+        timeline: [fix, practicetrial, fb], repetitions: 10, randomize_order: true
+    };
+    // High Perceptual Uncertainty and High Reward Uncertainty
+    var s0_r1_high60 = {
+        type: 'canvas-keyboard-response',
+        on_start: function(s0_r1_high60){
+            s0_r1_high60.contrast = Math.random(); s0_r1_high60.contrast1 = jsPsych.currentTrial().contrast  + randbet(0.05,0.35);
+        },
+        stimulus: function(c) {
+            gabor(c);
+        },
+        data: {
+            condition: 'HH', state: '0', reward: '1', prob: '60_40'
+        },
+        choices: [37,39], trial_duration: duration,
+        on_finish: function (data) {
+            if (data.key_press === rand60r1.pop()) {
+                data.correct = true;
+            } else {
+                data.correct = false;
+            }
+        },
+    };
+    // High Perceptual Uncertainty and Low Reward Uncertainty
+    var s0_r1_high90 = {
+        type: 'canvas-keyboard-response',
+        on_start: function(s0_r1_high90){
+            s0_r1_high90.contrast = Math.random(); s0_r1_high90.contrast1 = jsPsych.currentTrial().contrast  + randbet(0.05,0.35);
+        },
+        stimulus: function(c) {
+            gabor(c);
+        },
+        data: {
+            condition: 'HL', state: '0', reward: '1', prob: '90_10',
+        },
+        choices: [37,39],
+        trial_duration: duration,
+        on_finish: function (data) {
+            if (data.key_press === rand90r1.pop()) {
+                data.correct = true;
+            } else {
+                data.correct = false;
+            }
+        },
+    };
+    // Low PU and High RU
+    var s0_r1_low60 = {
+        type: 'canvas-keyboard-response',
+        on_start: function(s0_r1_low60){
+            s0_r1_low60.contrast = Math.random(); s0_r1_low60.contrast1 = jsPsych.currentTrial().contrast  + randbet(0.5,0.9);
+        },
+        stimulus: function(c) {
+            gabor(c);
+        },
+        data: {
+            condition: 'LH', state: '0', reward: '1', prob: '60_40',
+        },
+        choices: [37,39],
+        trial_duration: duration,
+        on_finish: function (data) {
+            if (data.key_press === rand60r1.pop()) {
+                data.correct = true;
+            } else {
+                data.correct = false;
+            }
+        },
+    };
+    // Low PU and Low RU
+    var s0_r1_low90 = {
+        type: 'canvas-keyboard-response',
+        on_start: function(s0_r1_low90){
+            s0_r1_low90.contrast = Math.random(); s0_r1_low90.contrast1 = jsPsych.currentTrial().contrast  + randbet(0.5,0.9);
+        },
+        stimulus: function(c) {
+            gabor(c);
+        },
+        data: {
+            condition: 'LL', state: '0', reward: '1', prob: '90_10',
+        },
+        choices: [37,39],
+        trial_duration: duration,
+        on_finish: function (data) {
+            if (data.key_press === rand90r1.pop()) {
+                data.correct = true;
+            } else {
+                data.correct = false;
+            }
+        },
+    };
+
+    var s0_r1_hh60 = {
+        timeline: [fix, s0_r1_high60, fb],
+        repetitions: 1,
+        randomize_order: true
+    };
+    var block1 = {
+        type: "html-keyboard-response",
+        stimulus: "HH",
+    };
+    var s0_r1_hl90 = {
+        timeline: [fix, s0_r1_high90, fb],
+        repetitions: 3,
+        randomize_order: true
+    };
+    var block2 = {
+        type: "html-keyboard-response",
+        stimulus: "HL",
+    };
+    var s0_r1_lh60 = {
+        timeline: [fix, s0_r1_low60, fb],
+        repetitions: 3,
+        randomize_order: true
+    };
+    var block3 = {
+        type: "html-keyboard-response",
+        stimulus: "LH",
+    };
+    var s0_r1_ll90 = {
+        timeline: [fix, s0_r1_low90, fb],
+        repetitions: 3,
+        randomize_order: true
+    };
+    var block4 = {
+        type: "html-keyboard-response",
+        stimulus: "LL",
+    };
+
+
+    // High PU and High RU
+    var s0_r2_high60 = {
+        type: 'canvas-keyboard-response',
+        on_start: function(s0_r2_high60){
+            s0_r2_high60.contrast = Math.random(); s0_r2_high60.contrast1 = jsPsych.currentTrial().contrast  + randbet(0.05,0.35);
+        },
+        stimulus: function(c) {
+            gabor(c);
+        },
+        data: {
+            condition: 'HH', state: '0', reward: '2', prob: '40_60',
+        },
+        choices: [37,39],
+        trial_duration: duration,
+        on_finish: function (data) {
+            if (data.key_press === rand60r2.pop()) {
+                data.correct = true;
+            } else {
+                data.correct = false;
+            }
+        },
+    };
+    // High PU and Low RU
+    var s0_r2_high90 = {
+        type: 'canvas-keyboard-response',
+        on_start: function(s0_r2_high90){
+            s0_r2_high90.contrast = Math.random(); s0_r2_high90.contrast1 = jsPsych.currentTrial().contrast  + randbet(0.05,0.35);
+        },
+        stimulus: function(c) {
+            gabor(c);
+        },
+        data: {
+            condition: 'HL', state: '0', reward: '2', prob: '10_90',
+        },
+        choices: [37,39],
+        trial_duration: duration,
+        on_finish: function (data) {
+            if (data.key_press === rand90r2.pop()) {
+                data.correct = true;
+            } else {
+                data.correct = false;
+            }
+        },
+    };
+    // Low PU and High RU
+    var s0_r2_low60 = {
+        type: 'canvas-keyboard-response',
+        on_start: function(s0_r2_low60){
+            s0_r2_low60.contrast = Math.random(); s0_r2_low60.contrast1 = jsPsych.currentTrial().contrast  + randbet(0.5,0.9);
+        },
+        stimulus: function(c) {
+            gabor(c);
+        },
+        data: {
+            condition: 'HL', state: '0', reward: '2', prob: '40_60',
+        },
+        choices: [37,39],
+        trial_duration: duration,
+        on_finish: function (data) {
+            if (data.key_press === rand60r2.pop()) {
+                data.correct = true;
+            } else {
+                data.correct = false;
+            }
+        },
+    };
+    // Low PU and Low RU
+    var s0_r2_low90 = {
+        type: 'canvas-keyboard-response',
+        on_start: function(s0_r2_low90){
+            s0_r2_low90.contrast = Math.random(); s0_r2_low90.contrast1 = jsPsych.currentTrial().contrast  + randbet(0.5,0.9);
+        },
+        stimulus: function(c) {
+            gabor(c);
+        },
+        data: {
+            condition: 'LL', state: '0', reward: '2', prob: '10_90',
+        },
+        choices: [37,39],
+        trial_duration: duration,
+        on_finish: function (data) {
+            if (data.key_press === rand90r2.pop()) {
+                data.correct = true;
+            } else {
+                data.correct = false;
+            }
+        },
+    };
+    var s0_r2_hh60 = {
+        timeline: [fix, s0_r2_high60, fb],
+        repetitions: 3,
+        randomize_order: true
+    };
+    var s0_r2_hl90 = {
+        timeline: [fix, s0_r2_high90, fb],
+        repetitions: 3,
+        randomize_order: true
+    };
+    var s0_r2_lh60 = {
+        timeline: [fix, s0_r2_low60, fb],
+        repetitions: 3,
+        randomize_order: true
+    };
+    var s0_r2_ll90 = {
+        timeline: [fix, s0_r2_low90, fb],
+        repetitions: 3,
+        randomize_order: true
+    };
+    // High PU and High RU
+    var s1_r1_high60 = {
+        type: 'canvas-keyboard-response',
+        on_start: function(s1_r1_high60){
+            s1_r1_high60.contrast = Math.random(); s1_r1_high60.contrast1 = jsPsych.currentTrial().contrast  - randbet(0.05,0.35);
+        },
+        stimulus: function(c) {
+            gabor(c);
+        },
+        data: {
+            condition: 'HH', state: '1', reward: '1', prob: '60_40',
+        },
+        choices: [37,39],
+        trial_duration: duration,
+        on_finish: function (data) {
+            if (data.key_press === rand60r1.pop()) {
+                data.correct = true;
+            } else {
+                data.correct = false;
+            }
+        }
+    };
+    // High PU and Low RU
+    var s1_r1_high90 = {
+        type: 'canvas-keyboard-response',
+        on_start: function(s1_r1_high90){
+            s1_r1_high90.contrast = Math.random(); s1_r1_high90.contrast1 = jsPsych.currentTrial().contrast  - randbet(0.05,0.35);
+        },
+        stimulus: function(c) {
+            gabor(c);
+        },
+        data: {
+            condition: 'LH', state: '1', reward: '1', prob: '90_10',
+        },
+        choices: [37,39],
+        trial_duration: duration,
+        on_finish: function (data) {
+            if (data.key_press === rand90r1.pop()) {
+                data.correct = true;
+            } else {
+                data.correct = false;
+            }
+        },
+    };
+    // Low PU and High RU
+    var s1_r1_low60 = {
+        type: 'canvas-keyboard-response',
+        on_start: function(s1_r1_low60){
+            s1_r1_low60.contrast = Math.random(); s1_r1_low60.contrast1 = jsPsych.currentTrial().contrast  - randbet(0.5,0.9);
+        },
+        stimulus: function(c) {
+            gabor(c);
+        },
+        data: {
+            condition: 'LH', state: '1', reward: '1', prob: '60_40',
+        },
+        choices: [37,39],
+        trial_duration: duration,
+        on_finish: function (data) {
+            if (data.key_press === rand60r1.pop()) {
+                data.correct = true;
+            } else {
+                data.correct = false;
+            }
+        },
+    };
+    // Low PU and Low RU
+    var s1_r1_low90 = {
+        type: 'canvas-keyboard-response',
+        on_start: function(s1_r1_low90){
+            s1_r1_low90.contrast = Math.random(); s1_r1_low90.contrast1 = jsPsych.currentTrial().contrast  - randbet(0.5,0.9);
+        },
+        stimulus: function(c) {
+            gabor(c);
+        },
+        data: {
+            condition: 'LL', state: '1', reward: '1', prob: '90_10',
+        },
+        choices: [37,39],
+        trial_duration: duration,
+        on_finish: function (data) {
+            if (data.key_press === rand90r1.pop()) {
+                data.correct = true;
+            } else {
+                data.correct = false;
+            }
+        },
+    };
+
+    var s1_r1_hh60 = {
+        timeline: [fix, s1_r1_high60, fb],
+        repetitions: 3,
+        randomize_order: true
+    };
+    var s1_r1_hl90 = {
+        timeline: [fix, s1_r1_high90, fb],
+        repetitions: 3,
+        randomize_order: true
+    };
+    var s1_r1_lh60 = {
+        timeline: [fix, s1_r1_low60, fb],
+        repetitions: 3,
+        randomize_order: true
+    };
+    var s1_r1_ll90 = {
+        timeline: [fix, s1_r1_low90, fb],
+        repetitions: 3,
+        randomize_order: true
+    };
+    // High PU and High RU
+    var s1_r2_high60 = {
+        type: 'canvas-keyboard-response',
+        on_start: function(practicetrial){
+            practicetrial.contrast = Math.random(); practicetrial.contrast1 = jsPsych.currentTrial().contrast  - randbet(0.05,0.35);
+        },
+        stimulus: function(c) {
+            gabor(c);
+        },
+        data: {
+            condition: 'HH', state: '1', reward: '2', prob: '40_60',
+        },
+        choices: [37,39],
+        trial_duration: duration,
+        on_finish: function (data) {
+            if (data.key_press === rand60r2.pop()) {
+                data.correct = true;
+            } else {
+                data.correct = false;
+            }
+        },
+    };
+    // High PU and Low RU
+    var s1_r2_high90 = {
+        type: 'canvas-keyboard-response',
+        on_start: function(practicetrial){
+            practicetrial.contrast = Math.random(); practicetrial.contrast1 = jsPsych.currentTrial().contrast  - randbet(0.05,0.35);
+        },
+        stimulus: function(c) {
+            gabor(c);
+        },
+        data: {
+            condition: 'HL', state: '1', reward: '2', prob: '10_90',
+        },
+        choices: [37,39],
+        trial_duration: duration,
+        on_finish: function (data) {
+            if (data.key_press === rand90r2.pop()) {
+                data.correct = true;
+            } else {
+                data.correct = false;
+            }
+        },
+    };
+    // Low PU and High RU
+    var s1_r2_low60 = {
+        type: 'canvas-keyboard-response',
+        on_start: function(practicetrial){
+            practicetrial.contrast = Math.random(); practicetrial.contrast1 = jsPsych.currentTrial().contrast  - randbet(0.5,0.9);
+        },
+        stimulus: function(c) {
+            gabor(c);
+        },
+        data: {
+            condition: 'LH', state: '1', reward: '2', prob: '40_60',
+        },
+        choices: [37,39],
+        trial_duration: duration,
+        on_finish: function (data) {
+            if (data.key_press === rand60r2.pop()) {
+                data.correct = true;
+            } else {
+                data.correct = false;
+            }
+        },
+    };
+    // Low PU and Low RU
+    var s1_r2_low90 = {
+        type: 'canvas-keyboard-response',
+        on_start: function(practicetrial){
+            practicetrial.contrast = Math.random(); practicetrial.contrast1 = jsPsych.currentTrial().contrast  - randbet(0.5,0.9);
+        },
+        stimulus: function(c) {
+            gabor(c);
+        },
+        data: {
+            condition: 'LL', state: '1', reward: '2', prob: '10_90',
+        },
+        choices: [37,39],
+        trial_duration: duration,
+        on_finish: function (data) {
+            if (data.key_press === rand90r2.pop()) {
+                data.correct = true;
+            } else {
+                data.correct = false;
+            }
+        },
+    };
+
+    var s1_r2_hh60 = {
+        timeline: [fix, s1_r2_high60, fb],
+        repetitions: 3,
+        randomize_order: true
+    };
+    var s1_r2_hl90 = {
+        timeline: [fix, s1_r2_high90, fb],
+        repetitions: 3,
+        randomize_order: true
+    };
+    var s1_r2_lh60 = {
+        timeline: [fix, s1_r2_low60, fb],
+        repetitions: 3,
+        randomize_order: true
+    };
+    var s1_r2_ll90 = {
+        timeline: [fix, s1_r2_low90, fb],
+        repetitions: 3,
+        randomize_order: true
+    };
+    var end = {
+        type: "html-keyboard-response",
+        stimulus: "Bye",
+    };
+    timeline.push(practiceblock);
+    //hh
+    timeline.push(block1);
+    timeline.push(s0_r1_hh60);
+    timeline.push(block2);
+    timeline.push(s1_r1_hh60);
+    timeline.push(block3);
+    timeline.push(s0_r2_hh60);
+    timeline.push(block4);
+    timeline.push(s1_r2_hh60)
+    //hl
+    timeline.push(block1);
+    timeline.push(s1_r1_hl90);
+    timeline.push(block2);
+    timeline.push(s1_r2_hl90);
+    timeline.push(block3);
+    timeline.push(s0_r1_hl90);
+    timeline.push(block4);
+    timeline.push(s0_r2_hl90);
+    //lh
+    timeline.push(block1);
+    timeline.push(s1_r1_lh60);
+    timeline.push(block2);
+    timeline.push(s0_r2_lh60);
+    timeline.push(block3);
+    timeline.push(s0_r1_lh60);
+    timeline.push(block4);
+    timeline.push(s1_r2_lh60);
+    //ll
+    timeline.push(block1);
+    timeline.push(s0_r2_ll90);
+    timeline.push(block2);
+    timeline.push(s0_r1_ll90);
+    timeline.push(block3);
+    timeline.push(s1_r2_ll90);
+    timeline.push(block4);
+    timeline.push(s1_r1_ll90);
+    timeline.push(end);
+
+    jsPsych.init({
+        timeline: timeline,
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    });
+</script>
+</html>
