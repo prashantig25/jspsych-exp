@@ -1,22 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>5.3</title>
-    <script src="jspsych-6.0.5/jspsych.js"></script>
-    <script src="jspsych-6.0.5/plugins/jspsych-html-keyboard-response.js"></script>
-    <script src="jspsych-6.0.5/plugins/jspsych-canvas-keyboard-response.js"></script>
-    <script src="jspsych-6.0.5/fixation.js"></script>
-    <script src="jspsych-6.0.5/gabor.js"></script>
-    <script src="jspsych-6.0.5/randbet.js"></script>
-    <script src="jspsych-6.0.5/shuffle.js"></script>
-    <link href="jspsych-6.0.5/css/jspsych.css" rel="stylesheet" type="text/css"/>
-</head>
-<style>
-    body {
-        background-color: #7e7d7d;
-    }
-</style>
 <script>
     var timeline = []; //array with every stage of the experiment.
     var duration = 1000; //trial duration
@@ -37,12 +18,12 @@
     };
     var highprac_instruct = {
         type: "html-keyboard-response", stimulus: "<p style=\"font-size: 20px;color: #000000\"> Here are the instructions for the task.</p>" +
-            "<p style=\"font-size: 20px;color: #000000\"> Before you do the actual task, please take part in the practice blocks. In these practice blocks, trials will begin with a fixation cross. In each trial, you will be presented with two images. Both images may have different levels of brightness on each trial. Your task is to choose the image which higher contrast level. If the image on your left has higher contrast level, press the <strong> left arrow </strong>. If the image on your right has higher contrast level, press the <strong> right arrow </strong>.</p>" +
+            "<p style=\"font-size: 20px;color: #000000\"> Before you do the actual task, please take part in the practice blocks. In these practice blocks, trials will begin with a fixation cross (+). In each trial, you will be presented with two images. Both images may have different levels of contrast on each trial. Your task is to choose the image with higher contrast level. If the image on your left has higher contrast level, press the <strong> left arrow </strong>. If the image on your right has higher contrast level, press the <strong> right arrow </strong>.</p>" +
             "<p> If you have understood the instructions, please press any key to proceed.</p>"
     };
     var lowprac_instruct = {
         type: "html-keyboard-response", stimulus: "<p style=\"font-size: 20px;color: #000000\"> Here are the instructions for the task.</p>" +
-            "<p style=\"font-size: 20px;color: #000000\"> Before you do the actual task, please take part in the practice blocks. In these practice blocks, trials will begin with a fixation cross. In each trial, you will be presented with two images. Both images may have different levels of brightness on each trial. Your task is to choose the image which lower contrast level. If the image on your left has lower contrast level, press the <strong> left arrow </strong>. If the image on your right has lower contrast level, press the <strong> right arrow </strong>.</p>" +
+            "<p style=\"font-size: 20px;color: #000000\"> Before you do the actual task, please take part in the practice blocks. In these practice blocks, trials will begin with a fixation cross (+). In each trial, you will be presented with two images. Both images may have different levels of contrast on each trial. Your task is to choose the image which lower contrast level. If the image on your left has lower contrast level, press the <strong> left arrow </strong>. If the image on your right has lower contrast level, press the <strong> right arrow </strong>.</p>" +
             "<p> If you have understood the instructions, please press any key to proceed.</p>"
     };
     var prac_highPU_s0 = {
@@ -86,9 +67,9 @@
     var instructions = {
         type: "html-keyboard-response", stimulus: "<p style=\"font-size: 20px;color: #000000\"> Here are the instructions for the main task.</p>" +
             "<p style=\"font-size: 20px;color: #000000\"> In this task, you will be presented with multiple blocks of trials. A fixation cross (+) will precede each trial. Please fixate on the cross before the start of the trial."+
-            "In each trial, you will be presented with two images. Both images may have different levels of brightness on each trial. Your task is to choose one of these two images."+
+            "In each trial, you will be presented with two images. Both images may have different levels of contrast on each trial. Your task is to choose one of these two images."+
             "<br> If you want to choose the image presented on your left, please press the <strong>left arrow </strong> on your keyboard. <br>If you want to choose the image presented on your right, press the <strong>right arrow </strong>on your keyboard.<br>"+
-            " Your main aim is to figure out which image you should choose, given the relationship between the contrast levels of either images with winning 1 or 0 points on that trial."+
+            " Your main aim is to figure out which image you should choose. Choosing a certain image, will help you win 1 or 0 points. You need to figure out the relationship between the images with winning 1 or 0 points on that trial."+
             " This relationship may change when a new block of trials starts. You will learn this relationship from feedback after your choice. That is, after each trial, you will be presented with the points you win on that trial."+
             " You should try to maximize your winnings on each trial." +
             "<p> If you have understood the instructions, please press any key to proceed to with the experiment.</p>"
@@ -502,5 +483,4 @@
         }
     });
 </script>
-
 </html>
