@@ -1,17 +1,17 @@
 <script>
-    var timeline = []; //array with every stage of the experiment.
-    var duration = 1000; //trial duration
-    var keys = [37, 39]; // key presses allowed when the stimulus is presented to the participants
-
-    //Correct resp for reward state 1
-    //r1_60 list of correct responses and shuffle function shuffles the order of the elements.
-    var r1_60 = [37, 39, 37, 39, 37, 39, 37, 37, 37, 39]; var rand60r1 = shuffle(r1_60);
-    var r1_90 = [37, 39, 37, 37, 37, 37, 37, 37, 37, 37]; var rand90r1 = shuffle(r1_90);
-    //Correct resp for reward state 2
-    var r2_60 = [39, 39, 39, 39, 37, 39, 37, 37, 37, 39]; var rand60r2 = shuffle(r2_60);
-    var r2_90 = [39, 39, 39, 39, 39, 39, 39, 39, 39, 37]; var rand90r2 = shuffle(r2_90);
+   var timeline = []; //array with every stage of the experiment.
+   var duration = 1000; //trial duration
+   var keys = [37, 39]; // key presses allowed when the stimulus is presented to the participants
+   
+   //Correct resp for reward state 1
+   //r1_60 list of correct responses and shuffle function shuffles the order of the elements.
+   var r1_60 = [37, 39, 37, 39, 37, 39, 37, 37, 37, 39, 37, 39, 37, 39, 37, 39, 37, 37, 37, 39]; var rand60r1 = shuffle(r1_60);
+   var r1_90 = [37, 39, 37, 37, 37, 37, 37, 37, 37, 37, 37, 39, 37, 37, 37, 37, 37, 37, 37, 37]; var rand90r1 = shuffle(r1_90);
+   //Correct resp for reward state 2
+   var r2_60 = [39, 39, 39, 39, 37, 39, 37, 37, 37, 39, 39, 39, 39, 39, 37, 39, 37, 37, 37, 39]; var rand60r2 = shuffle(r2_60);
+   var r2_90 = [39, 39, 39, 39, 39, 39, 39, 39, 39, 37, 39, 39, 39, 39, 39, 39, 39, 39, 39, 37]; var rand90r2 = shuffle(r2_90);
     
-    var welcome = {
+   var welcome = {
         type: "html-keyboard-response", stimulus: "<p style=\"font-size: 20px;color: #000000\"> Welcome to the study. Press any key to process forward.</p>",
     };
     var fix = {
@@ -19,12 +19,12 @@
     };
     var highprac_instruct = {
         type: "html-keyboard-response", stimulus: "<p style=\"font-size: 20px;color: #000000\"> Here are the instructions for the task.</p>" +
-            "<p style=\"font-size: 20px;color: #000000\"> Before you do the actual task, please take part in the practice blocks. In these practice blocks, trials will begin with a fixation cross (+). In each trial, you will be presented with two images. Both images may have different levels of contrast on each trial. Your task is to choose the image which higher contrast level i.e. the image which is brighter. If the image on your left has higher contrast level, press the <strong> left arrow </strong>. If the image on your right has higher contrast level, press the <strong> right arrow </strong>.</p>" +
+            "<p style=\"font-size: 20px;color: #000000\"> Before you do the actual task, please take part in the practice blocks. In these practice blocks, trials will begin with a fixation cross. In each trial, you will be presented with two images. Both images may have different levels of brightness on each trial. Your task is to choose the image which higher contrast level. If the image on your left has higher contrast level, press the <strong> left arrow </strong>. If the image on your right has higher contrast level, press the <strong> right arrow </strong>.</p>" +
             "<p> If you have understood the instructions, please press any key to proceed.</p>"
     };
     var lowprac_instruct = {
         type: "html-keyboard-response", stimulus: "<p style=\"font-size: 20px;color: #000000\"> Here are the instructions for the task.</p>" +
-            "<p style=\"font-size: 20px;color: #000000\"> Before you do the actual task, please take part in the practice blocks. In these practice blocks, trials will begin with a fixation cross (+). In each trial, you will be presented with two images. Both images may have different levels of contrast on each trial. Your task is to choose the image which lower contrast level i.e. the image which has lower brightness. If the image on your left has lower contrast level, press the <strong> left arrow </strong>. If the image on your right has lower contrast level, press the <strong> right arrow </strong>.</p>" +
+            "<p style=\"font-size: 20px;color: #000000\"> Before you do the actual task, please take part in the practice blocks. In these practice blocks, trials will begin with a fixation cross. In each trial, you will be presented with two images. Both images may have different levels of brightness on each trial. Your task is to choose the image which lower contrast level. If the image on your left has lower contrast level, press the <strong> left arrow </strong>. If the image on your right has lower contrast level, press the <strong> right arrow </strong>.</p>" +
             "<p> If you have understood the instructions, please press any key to proceed.</p>"
     };
     var prac_highPU_s0 = {
@@ -33,6 +33,7 @@
             prac_highPU_s0.contrast = Math.random(); prac_highPU_s0.contrast1 = jsPsych.currentTrial().contrast  + randbet(0.05,0.35);
         },
         stimulus: gabor, choices: keys, trial_duration: duration, response_ends_trial: false,
+        data: {con: jsPsych.currentTrial().contrast}
     };
     var prac_highPU_s1 = {
         type: 'canvas-keyboard-response',
@@ -65,14 +66,12 @@
     var prac_block = {
         type: "html-keyboard-response", stimulus: "<p style=\"font-size: 20px;color: #000000\"> Practice Block will begin now. Press any key to start the practice block.</p>",
     };
-  
     var instructions = {
         type: "html-keyboard-response", stimulus: "<p style=\"font-size: 20px;color: #000000\"> Here are the instructions for the main task.</p>" +
             "<p style=\"font-size: 20px;color: #000000\"> In this task, you will be presented with multiple blocks of trials. A fixation cross (+) will precede each trial. Please fixate on the cross before the start of the trial."+
-            "In each trial, you will be presented with two images. Both images may have different levels of contrast on each trial. Your task is to choose one of these two images."+
+            "In each trial, you will be presented with two images. Both images may have different levels of brightness on each trial. Your task is to choose one of these two images."+
             "<br> If you want to choose the image presented on your left, please press the <strong>left arrow </strong> on your keyboard. <br>If you want to choose the image presented on your right, press the <strong>right arrow </strong>on your keyboard.<br>"+
-            " Your main aim is to figure out which image you should choose. On each block of trials there is relationship between the contrast level of the image and how many points you will win if you choose that image. " +
-            "<br> For example, on some blocks of trials, the image with higher contrast is associated with winning one point while in another block of trial, the relationship may be reversed."+
+            " Your main aim is to figure out which image you should choose, given the relationship between the contrast levels of either images with winning 1 or 0 points on that trial."+
             " This relationship may change when a new block of trials starts. You will learn this relationship from feedback after your choice. That is, after each trial, you will be presented with the points you win on that trial."+
             " You should try to maximize your winnings on each trial." +
             "<p> If you have understood the instructions, please press any key to proceed to with the experiment.</p>"
@@ -90,10 +89,11 @@
     };
     var block1 = {
         type: "html-keyboard-response",
-        stimulus: "<p style=\"font-size: 20px;color: #000000\"> Next block begins now. Press a key when you are ready.</p>",
+        stimulus: "Next block begins now",
     };
-
-    // High Perceptual Uncertainty and High Reward Uncertainty
+    
+    //Stimulus presentations
+    // High Perceptual and Reward Uncertainty
     var s0_r1_high60 = {
         type: 'canvas-keyboard-response',
         on_start: function(s0_r1_high60){
@@ -101,7 +101,7 @@
         },
         stimulus: gabor,
         data: {
-            condition: 'HH', state: '0', reward: '1', prob: '60_40', 
+            condition: 'HH', state: '0', reward: '1', prob: '60_40',
         },
         choices: keys, trial_duration: duration,response_ends_trial: false,
         on_finish: function (data) {
@@ -112,35 +112,8 @@
             }
         },
     };
-    // High PU and High RU
-    var s1_r2_high60 = {
-        type: 'canvas-keyboard-response',
-        on_start: function(practicetrial){
-            practicetrial.contrast = Math.random(); practicetrial.contrast1 = jsPsych.currentTrial().contrast  - randbet(0.05,0.35);
-        },
-        stimulus: gabor,
-        data: {condition: 'HH', state: '1', reward: '2', prob: '40_60'},
-        choices: keys, trial_duration: duration, response_ends_trial: false,
-        on_finish: function (data) {
-            if (data.key_press === rand60r2_2.pop()) {
-                data.correct = true;
-            } else {
-                data.correct = false;
-            }
-        },
-    };
-    var s0_r1_hh60 = {
-        timeline: [fix, s0_r1_high60, fb], repetitions: 1,
-    };
-    var s1_r2_hh60 = {
-        timeline: [fix, s1_r2_high60, fb], repetitions: 1,
-    };
-    var trials_high60 = [s0_r1_hh60, s1_r2_hh60]
-    var array_high60 = jsPsych.randomization.repeat(trials_high60, 20)
-    var high60 = {
-        timeline: array_high60, repetitions: 1
-    }
-    // High Perceptual Uncertainty and Low Reward Uncertainty
+    
+    // High Perceptual and Low Reward Uncertainty
     var s0_r1_high90 = {
         type: 'canvas-keyboard-response',
         on_start: function(s0_r1_high90){
@@ -157,65 +130,26 @@
             }
         },
     };
-    var s0_r1_hl90 = {
-        timeline: [fix, s0_r1_high90, fb], repetitions: 1, randomize_order: true
-    };
-    // High PU and Low RU
-    var s1_r2_high90 = {
+    
+    // High Perceptual and Low Reward Uncertainty
+    var s1_r2_low60 = {
         type: 'canvas-keyboard-response',
-        on_start: function(s1_r2_high90){
-            s1_r2_high90.contrast = Math.random(); s1_r2_high90.contrast1 = jsPsych.currentTrial().contrast  - randbet(0.05,0.35);
+        on_start: function(s1_r2_low60){
+            s1_r2_low60.contrast = Math.random(); s1_r2_low60.contrast1 = jsPsych.currentTrial().contrast  - randbet(0.5,0.9);
         },
         stimulus: gabor,
-        data: {condition: 'HL', state: '1', reward: '2', prob: '10_90'},
+        data: {condition: 'LH', state: '1', reward: '2', prob: '40_60',},
         choices: keys, trial_duration: duration, response_ends_trial: false,
         on_finish: function (data) {
-            if (data.key_press === rand90r2.pop()) {
+            if (data.key_press === rand60r2_3.pop()) {
                 data.correct = true;
             } else {
                 data.correct = false;
             }
         },
     };
-    var s1_r2_hl90 = {
-        timeline: [fix, s1_r2_high90, fb], repetitions: 1, randomize_order: true
-    };
-    var trials_high90 = [s0_r1_hl90, s1_r2_hl90];
-    var array_high90 = jsPsych.randomization.repeat(trials_high90, 20)
-    var high90 = {
-        timeline: array_high90, repetitions:1
-    };
-
-   
-    var s1_r2_hl60 = {
-        timeline: [fix, s1_r2_low60, fb], repetitions: 1, randomize_order: true
-    };
-    // Low PU and High RU
-    var s0_r1_low60 = {
-        type: 'canvas-keyboard-response',
-        on_start: function(s0_r1_low60){
-            s0_r1_low60.contrast = Math.random(); s0_r1_low60.contrast1 = jsPsych.currentTrial().contrast  + randbet(0.5,0.9);
-        },
-        stimulus: gabor,
-        data: {condition: 'LH', state: '0', reward: '1', prob: '60_40'},
-        choices: keys, trial_duration: duration, response_ends_trial: false,
-        on_finish: function (data) {
-            if (data.key_press === rand60r1_1.pop()) {
-                data.correct = true;
-            } else {
-                data.correct = false;
-            }
-        },
-    };
-    var s0_r1_hl60 = {
-        timeline: [fix, s0_r1_low60, fb], repetitions: 1, randomize_order: true
-    };
-    var trials_low60 = [s0_r1_hl60, s1_r2_hl60];
-    var array_low60 = jsPsych.randomization.repeat(trials_low60, 20)
-    var low60 = {
-        timeline: array_low60, repetitions:1
-    };
-    // Low PU and Low RU
+     
+    // Low Perceptual and Reward Uncertainty
     var s1_r2_low90 = {
         type: 'canvas-keyboard-response',
         on_start: function(s1_r2_low90){
@@ -232,221 +166,21 @@
             }
         },
     };
-    // Low PU and Low RU
-    var s0_r1_low90 = {
-        type: 'canvas-keyboard-response',
-        on_start: function(s0_r1_low90){
-            s0_r1_low90.contrast = Math.random(); s0_r1_low90.contrast1 = jsPsych.currentTrial().contrast  + randbet(0.5,0.9);
-        },
-        stimulus: gabor,
-        data: {condition: 'LL', state: '0', reward: '1', prob: '90_10'},
-        choices: keys, trial_duration: duration, response_ends_trial: false,
-        on_finish: function (data) {
-            if (data.key_press === rand90r1_1.pop()) {
-                data.correct = true;
-            } else {
-                data.correct = false;
-            }
-        },
+    
+    //trial structure with fixation, stimulus, and feedback
+    var s0_r1_hh60 = {
+        timeline: [fix, s0_r1_high60, fb], repetitions: 1, randomize_order: true
     };
-    var s0_r1_ll90 = {
-        timeline: [fix, s0_r1_low90, fb], repetitions: 1, randomize_order: true
+    var s0_r1_hl90 = {
+        timeline: [fix, s0_r1_high90, fb], repetitions: 1, randomize_order: true
+    };
+    var s1_r2_hl60 = {
+        timeline: [fix, s1_r2_low60, fb], repetitions: 1, randomize_order: true
     };
     var s1_r2_ll90 = {
         timeline: [fix, s1_r2_low90, fb], repetitions: 1, randomize_order: true
     };
-    var trials_low90 = [s0_r1_ll90, s1_r2_ll90];
-    var array_low90 = jsPsych.randomization.repeat(trials_low90, 20)
-    var low90 = {
-        timeline: array_low90, repetitions:1
-    };
-
-    // High PU and High RU
-    var s0_r2_high60 = {
-        type: 'canvas-keyboard-response',
-        on_start: function(s0_r2_high60){
-            s0_r2_high60.contrast = Math.random(); s0_r2_high60.contrast1 = jsPsych.currentTrial().contrast  + randbet(0.05,0.35);
-        },
-        stimulus: gabor, choices: keys, trial_duration: duration, response_ends_trial: false,
-        data: {condition: 'HH', state: '0', reward: '2', prob: '40_60'},
-        on_finish: function (data) {
-            if (data.key_press === rand60r2.pop()) {
-                data.correct = true;
-            } else {
-                data.correct = false;
-            }
-        },
-    };
-    // High PU and High RU
-    var s1_r1_high60 = {
-        type: 'canvas-keyboard-response',
-        on_start: function(s1_r1_high60){
-            s1_r1_high60.contrast = Math.random(); s1_r1_high60.contrast1 = jsPsych.currentTrial().contrast  - randbet(0.05,0.35);
-        },
-        stimulus: gabor,
-        data: {condition: 'HH', state: '1', reward: '1', prob: '60_40'},
-        choices: keys, trial_duration: duration, response_ends_trial: false,
-        on_finish: function (data) {
-            if (data.key_press === rand60r1_2.pop()) {
-                data.correct = true;
-            } else {
-                data.correct = false;
-            }
-        }
-    };
-    var s0_r2_hh60 = {
-        timeline: [fix, s0_r2_high60, fb], repetitions: 1, randomize_order: true
-    };
-    var s1_r1_hh60 = {
-        timeline: [fix, s1_r1_high60, fb], repetitions: 1, randomize_order: true
-    };
-    var trials_high60_1 = [s0_r2_hh60, s1_r1_hh60];
-    var array_high60_1 = jsPsych.randomization.repeat(trials_high60_1, 20)
-    var high60_1 = {
-        timeline: array_high60_1, repetitions:1
-    };
-
-    // High PU and Low RU
-    var s0_r2_high90 = {
-        type: 'canvas-keyboard-response',
-        on_start: function(s0_r2_high90){
-            s0_r2_high90.contrast = Math.random(); s0_r2_high90.contrast1 = jsPsych.currentTrial().contrast  + randbet(0.05,0.35);
-        },
-        stimulus: gabor,
-        data: {condition: 'HL', state: '0', reward: '2', prob: '10_90'},
-        choices: keys, trial_duration: duration, response_ends_trial: false,
-        on_finish: function (data) {
-            if (data.key_press === rand90r2.pop()) {
-                data.correct = true;
-            } else {
-                data.correct = false;
-            }
-        },
-    };
-    // High PU and Low RU
-    var s1_r1_high90 = {
-        type: 'canvas-keyboard-response',
-        on_start: function(s1_r1_high90){
-            s1_r1_high90.contrast = Math.random(); s1_r1_high90.contrast1 = jsPsych.currentTrial().contrast  - randbet(0.05,0.35);
-        },
-        stimulus: gabor,
-        data: {condition: 'LH', state: '1', reward: '1', prob: '90_10'},
-        choices: keys, trial_duration: duration, response_ends_trial: false,
-        on_finish: function (data) {
-            if (data.key_press === rand90r1_2.pop()) {
-                data.correct = true;
-            } else {
-                data.correct = false;
-            }
-        },
-    };
-    var s0_r2_hl90 = {
-        timeline: [fix, s0_r2_high90, fb], repetitions: 1, randomize_order: true
-    };
-    var s1_r1_hl90 = {
-        timeline: [fix, s1_r1_high90, fb], repetitions: 1,randomize_order: true
-    };
-    var trials_high90_1 = [s0_r2_hl90, s1_r1_hl90];
-    var array_high90_1 = jsPsych.randomization.repeat(trials_high90_1, 20)
-    var high90_1 = {
-        timeline: array_high90_1, repetitions:1
-    };
-
-    // Low PU and High RU
-    var s0_r2_low60 = {
-        type: 'canvas-keyboard-response',
-        on_start: function(s0_r2_low60){
-            s0_r2_low60.contrast = Math.random(); s0_r2_low60.contrast1 = jsPsych.currentTrial().contrast  + randbet(0.5,0.9);
-        },
-        stimulus:gabor,
-        data: {condition: 'HL', state: '0', reward: '2', prob: '40_60'},
-        choices: keys, trial_duration: duration, response_ends_trial: false,
-        on_finish: function (data) {
-            if (data.key_press === rand60r2_1.pop()) {
-                data.correct = true;
-            } else {
-                data.correct = false;
-            }
-        },
-    };
-    // Low PU and High RU
-    var s1_r1_low60 = {
-        type: 'canvas-keyboard-response',
-        on_start: function(s1_r1_low60){
-            s1_r1_low60.contrast = Math.random(); s1_r1_low60.contrast1 = jsPsych.currentTrial().contrast  - randbet(0.5,0.9);
-        },
-        stimulus: gabor,
-        data: {condition: 'LH', state: '1', reward: '1', prob: '60_40'},
-        choices: keys, trial_duration: duration, response_ends_trial: false,
-        on_finish: function (data) {
-            if (data.key_press === rand60r1_3.pop()) {
-                data.correct = true;
-            } else {
-                data.correct = false;
-            }
-        },
-    };
-    var s0_r2_lh60 = {
-        timeline: [fix, s0_r2_low60, fb], repetitions: 1, randomize_order: true
-    };
-    var s1_r1_lh60 = {
-        timeline: [fix, s1_r1_low60, fb],repetitions: 1, randomize_order: true
-    };
-    var trials_low60_1 = [s0_r2_lh60, s1_r1_lh60];
-    var array_low60_1 = jsPsych.randomization.repeat(trials_low60_1, 20)
-    var low60_1 = {
-        timeline: array_low60_1, repetitions:1
-    };
-    // Low PU and Low RU
-    var s0_r2_low90 = {
-        type: 'canvas-keyboard-response',
-        on_start: function(s0_r2_low90){
-            s0_r2_low90.contrast = Math.random(); s0_r2_low90.contrast1 = jsPsych.currentTrial().contrast  + randbet(0.5,0.9);
-        },
-        stimulus: gabor,
-        data: {condition: 'LL', state: '0', reward: '2', prob: '10_90'},
-        choices: keys, trial_duration: duration, response_ends_trial: false,
-        on_finish: function (data) {
-            if (data.key_press === rand90r2_1.pop()) {
-                data.correct = true;
-            } else {
-                data.correct = false;
-            }
-        },
-    };
-    var s0_r2_ll90 = {
-        timeline: [fix, s0_r2_low90, fb], repetitions: 1, randomize_order: true
-    };
-    // Low PU and Low RU
-    var s1_r1_low90 = {
-        type: 'canvas-keyboard-response',
-        on_start: function(s1_r1_low90){
-            s1_r1_low90.contrast = Math.random(); s1_r1_low90.contrast1 = jsPsych.currentTrial().contrast  - randbet(0.5,0.9);
-        },
-        stimulus: gabor,
-        data: {condition: 'LL', state: '1', reward: '1', prob: '90_10'},
-        choices: keys, trial_duration: duration, response_ends_trial: false,
-        on_finish: function (data) {
-            if (data.key_press === rand90r1_3.pop()) {
-                data.correct = true;
-            } else {
-                data.correct = false;
-            }
-        },
-    };
-    var s1_r1_ll90 = {
-        timeline: [fix, s1_r1_low90, fb], repetitions: 1, randomize_order: true
-    };
-    var trials_low90_1 = [s0_r2_ll90, s1_r1_ll90];
-    var array_low90_1 = jsPsych.randomization.repeat(trials_low90_1, 20)
-    var low90_1 = {
-        timeline: array_low90_1, repetitions:1
-    };
-    var end = {
-        type: "html-keyboard-response",
-        stimulus: "<p style=\"font-size: 20px;color: #000000\"> You have reached the end of the study. Thanks for participating! </p>",
-    };
-
+    
     //start and practice blocks
     timeline.push(welcome);
     timeline.push(highprac_instruct);
@@ -455,29 +189,15 @@
     timeline.push(lowprac_instruct);
     timeline.push(prac_block);
     timeline.push(practice_block);
-    //hh
+    
+    //Experimental Blocks
     timeline.push(instructions);
     timeline.push(block1);
-    timeline.push(high60);
+    timeline.push(s0_r1_hh60);
     timeline.push(block1);
-    timeline.push(low90_1);
+    timeline.push(s0_r1_hl90);
     timeline.push(block1);
-    timeline.push(low90);
+    timeline.push(s1_r2_hl60);
     timeline.push(block1);
-    timeline.push(high90);
-    timeline.push(block1);
-    timeline.push(low60_1);
-    timeline.push(block1);
-    timeline.push(low60);
-    timeline.push(block1);
-    timeline.push(high60_1);
-    timeline.push(block1);
-    timeline.push(high90_1);
-
-
-    timeline.push(end);
-
-    jsPsych.init({
-        timeline: timeline,
-    });
+    timeline.push(s1_r2_ll90);
 </script>
