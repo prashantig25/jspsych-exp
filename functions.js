@@ -1,4 +1,5 @@
-function fixation(c) { //generates fixation by drawing on HTML canvas.
+//generates fixation by drawing on HTML canvas.
+function fixation(c) { 
     var context = c.getContext("2d"); //Name of the canvas
     context.moveTo(240, 250); //start of horizontal line
     context.lineTo(280, 250); //end of horizontal line
@@ -9,7 +10,8 @@ function fixation(c) { //generates fixation by drawing on HTML canvas.
     context.stroke();
 };
 
-function gabor(c) { //generates 2 gabors left and right to the fixation
+//generates 2 gabors left and right to the fixation
+function gabor(c) { 
     var context = c.getContext("2d");
     const my_gradient = context.createLinearGradient(0,0,200,0); const my_gradient1 = context.createLinearGradient(225,0,425,0); //two gradients for two gabors
     const bands = 10; const colors = ["#000", "#FFF"];
@@ -36,12 +38,14 @@ function gabor(c) { //generates 2 gabors left and right to the fixation
     context.stroke();
 }
 
-function randbet(min, max) { //randbet generates a randomly number between the min and max number. // min and max are the upper and lower bound.
+//randbet generates a randomly number between the min and max number
+function randbet(min, max) {  // min and max are the upper and lower bound
     return Math.random() * (max - min) + min;
 };
 
+// While there are elements in the array
 function shuffle(array) {
-    var ctr = array.length, temp, index; // While there are elements in the array
+    var ctr = array.length, temp, index; 
     while (ctr > 0) {
         index = Math.floor(Math.random() * ctr); // Pick a random index
         ctr--; // Decrease ctr by 1
