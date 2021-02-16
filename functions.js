@@ -1,3 +1,4 @@
+// List of all functions that are called in the actual experiment code. 
 //generates fixation by drawing on HTML canvas.
 function fixation(c) { 
     var context = c.getContext("2d"); //Name of the canvas
